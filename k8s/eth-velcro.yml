@@ -51,7 +51,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: eth-velcro
-              key: username
+              key: some.secret
         - name: PORT
           valueFrom:
             configMapKeyRef:
