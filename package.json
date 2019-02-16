@@ -23,7 +23,7 @@
     "dist": "yarn build && yarn bundle",
     "watch": "tsc -w -p . & rollup -cw",
     "lint": "tslint 'src/**/*.ts'",
-    "dev": "dotenv ts-node ./src/index.ts"
+    "dev": "ts-node -r dotenv/config ./src/index.ts"
   },
   "dependencies": {
     "ajv": "^6.9.1",
