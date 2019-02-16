@@ -32,7 +32,7 @@ app.ws('/ipfsHash/:ipfsHash', (ws, req) => {
     logManager.subscribe(ipfsHash, ws);
 
     ws.on('close', () => {
-        logManager.unsubscribe(ipfsHash);
+        logManager.unsubscribe(ipfsHash, ws);
     });
 });
 
