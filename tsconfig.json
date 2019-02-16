@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "module": "es2015",
+    "moduleResolution": "node",
+    "removeComments": false,
+    "sourceMap": true,
+    "declaration": true,
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "rootDir": "./src",
+    "outDir": "lib"
+  },
+
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/__tests__/**.ts", "src/__mocks__/**.ts"]
+}
