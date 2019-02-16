@@ -1,101 +1,108 @@
-import { eventProjection } from './eventProjection'
-import { WebhookSource } from './WebhookSource'
-import fetch from 'node-fetch'
+import { eventProjection } from './eventProjection';
+import { WebhookSource } from './WebhookSource';
+import { WebhookListener } from './WebhookListener'
+import { WebhookListenerFactory } from './WebhookListenerFactory';
+import * as utils from 'web3-utils';
 
-class WebhookManager {
-  private final web3: any
-  private final listeners: Map<string, WebhookListener>
-  private final webhookSource: WebhookSource
+export class WebhookManager {
+  private web3: any;
+  private listeners: Map<string, WebhookListener>;
+  private webhookSource: WebhookSource;
+  private webhookListenerFactory;
+  private subscription: any;
+  private address: string;
 
   constructor (
     web3: any,
     address: string,
-    webhookSource: WebhookSource
+    webhookSource: WebhookSource,
+    webhookListenerFactory: WebhookListenerFactory
   ) {
-    this.web3 = web3
-    this.address = address
-    this.webhookSource = webhookSource
-    this.listeners = {}
+    this.web3 = web3;
+    this.address = address;
+    this.webhookSource = webhookSource;
+    this.webhookListenerFactory = webhookListenerFactory
+    this.listeners = new Map()
   }
 
-  public function start() {
+  async start() {
     if (this.subscription) { return }
 
     const topics = [
       [
-        `0x${web3.utils.sha3('Registered(address,bytes)')}`,
-        `0x${web3.utils.sha3('Unregistered(address,bytes)')}`
+        utils.sha3('Registered(address,bytes)'),
+        utils.sha3('Unregistered(address,bytes)')
       ]
-    ]
+    ];
 
     var subscription =
       this.web3.eth.subscribe(
         'logs',
         this.address,
         topics
-      )
+      );
 
-    subscription.on('data', this.onData.bind(this))
-    subscription.on('error', this.onError.bind(this))
+    subscription.on('data', this.onData.bind(this));
+    subscription.on('error', this.onError.bind(this));
 
-    this.subscription = subscription
+    this.subscription = subscription;
 
     const events = await this.web3.eth.getPastLogs({
       fromBlock: 0,
       toBlock: 'latest',
       address: this.address,
       topics
-    })
+    });
 
-    const ipfsHashes = eventProjection(events)
+    const ipfsHashes = eventProjection(events);
 
-    ipfsHashes.forEach(ipfsHash => this.register(ipfsHash))
+    await Promise.all(Array.from(ipfsHashes).map(ipfsHash => this.register(ipfsHash)));
   }
 
-  public function stop() {
+  stop() {
     if (this.subscription) {
-      this.subscription.unsubscribe()
-      this.subscription = null
+      this.subscription.unsubscribe();
+      this.subscription = null;
     }
   }
 
-  public function onData(log) {
+  onData(log) {
     switch (log.event) {
       case 'Registered':
-        this.onRegistered(log)
-        break
+        this.onRegistered(log);
+        break;
       case 'Unregistered':
-        this.onUnregistered(log)
-        break
+        this.onUnregistered(log);
+        break;
       // no default
     }
   }
 
-  public function onError(error) {
-    console.error(error)
+  onError(error) {
+    console.error(error);
   }
 
-  public function onRegistered(log) {
-    const { ipfsHash } = log.args
-    this.register(ipfsHash)
+  onRegistered(log) {
+    const { ipfsHash } = log.args;
+    this.register(ipfsHash);
   }
 
-  public function register(ipfsHash) {
-    this.webhookSource.get(ipfsHash)
+  async register(ipfsHash) {
+    await this.webhookSource.get(ipfsHash)
       .then(webhook => {
-        listeners[ipfsHash] = new WebhookListener(fetch, this.web3)
-        webhookListener.start(webhook)
+        this.listeners[ipfsHash] = this.webhookListenerFactory.create(webhook)
       })
       .catch(error => {
         console.error(error)
-      })
+      });
   }
 
-  public function onUnregistered() {
-    let webhookListener = listeners[ipfsHash]
+  onUnregistered(log) {
+    const { ipfsHash } = log.args;
+    let webhookListener = this.listeners[ipfsHash]
     if (webhookListener) {
       webhookListener.stop()
-      delete listeners[ipfsHash]
+      delete this.listeners[ipfsHash]
     }
   }
 }

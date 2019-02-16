@@ -1,16 +1,16 @@
-import { Webhook } from './types'
-import { WebhookListener } from './WebhookListener'
-import { validator } from './validator'
+import { Webhook } from './types';
+import { WebhookListener } from './WebhookListener';
+import { validator } from './validator';
 
 export class WebhookSource {
-  private ipfs: any;
+  private _ipfs: any;
 
   constructor (ipfs: any) {
-    this.ipfs = ipfs;
+    this._ipfs = ipfs;
   }
 
   async get (ipfsHash): Promise<Webhook> {
-    const content = await this.ipfs.get(ipfsHash);
+    const content = await this._ipfs.get(ipfsHash);
     const json = JSON.parse(content);
     const validate = validator();
     if (!validate(json)) {
