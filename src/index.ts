@@ -1,12 +1,21 @@
-import { LogManager } from "./LogManager";
-import { WebhookManager } from "./WebhookManager";
 import express from "express";
 import enableWs from "express-ws";
+
+import { LogManager } from "./LogManager";
+import { WebhookManager } from "./WebhookManager";
+import { setup } from './setup';
+
 
 const { PORT } = process.env;
 if (!PORT) {
     throw new Error("Missing env PORT");
 }
+
+setup(
+  process.env.CONTRACT_ADDRESS,
+  process.env.WS_URL,
+  process.env.IPFS_URL
+)
 
 const logManager = new LogManager();
 

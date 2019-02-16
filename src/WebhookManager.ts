@@ -90,9 +90,11 @@ export class WebhookManager {
   async register(ipfsHash) {
     await this.webhookSource.get(ipfsHash)
       .then(webhook => {
+        console.log(`Starting webhook ${ipfsHash}...`)
         this.listeners[ipfsHash] = this.webhookListenerFactory.create(webhook)
       })
       .catch(error => {
+        console.log(`Error starting webhook ${ipfsHash}: ${error.message}`)
         console.error(error)
       });
   }
@@ -101,6 +103,7 @@ export class WebhookManager {
     const { ipfsHash } = log.args;
     let webhookListener = this.listeners[ipfsHash]
     if (webhookListener) {
+      console.log(`Stopping webhook ${ipfsHash}...`)
       webhookListener.stop()
       delete this.listeners[ipfsHash]
     }
