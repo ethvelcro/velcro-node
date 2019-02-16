@@ -1,4 +1,4 @@
-export * from "./WebhookListener";
+import { WebhookManager } from "./WebhookManager";
 
 const http = require("http");
 
