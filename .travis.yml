@@ -1,0 +1,85 @@
+language: node_js
+node_js:
+ - "10"
+sudo: required
+
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+env:
+  global:
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+    - IMAGE_NAME=ethvelcro/velcro-node
+
+cache:
+  directories:
+    - "$HOME/google-cloud-sdk/"
+
+before_install:
+  - export IMAGE_NAME_COMMIT=${IMAGE_NAME}:${TRAVIS_COMMIT}
+  - export IMAGE_NAME_LATEST=${IMAGE_NAME}:latest
+
+  - gcloud version || true
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud version
+
+  - echo ${GCLOUD_ENCODED_CREDS} | base64 -d > gcloud.json
+  - gcloud auth activate-service-account --key-file gcloud.json
+
+  - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+script: "true"
+
+jobs:
+  include:
+
+    ########
+    # Test #
+    ########
+
+    - stage: test
+      env:
+        - UNIT=
+      script:
+        - yarn
+        - yarn test
+
+    ##################
+    # Build and Push #
+    ##################
+
+    - stage: build and push
+      env:
+        - COMMIT=
+      script:
+        - docker build . -t ${IMAGE_NAME_COMMIT}
+        - docker push ${IMAGE_NAME_COMMIT}
+
+    - stage: build and push
+      env:
+        - LATEST=
+      if: branch = master AND type = push
+      script:
+        - docker build . -t ${IMAGE_NAME_LATEST}
+        - docker push ${IMAGE_NAME_LATEST}
+
+    ##########
+    # Deploy #
+    ##########
+
+    - stage: deploy
+      env:
+        - ETH_VELCRO=
+      if: branch = master AND type = push
+      script:
+        - gcloud components install kubectl
+        - gcloud container clusters get-credentials --zone=us-west1-a --project=monchu-210122 production
+
+        - envsubst < ./k8s/eth-velcro.yml > ./k8s/eth-velcro.yml.out.yml
+        - kubectl apply -f ./k8s/eth-velcro.yml.out.yml -n eth-velcro

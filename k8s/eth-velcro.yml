@@ -1,0 +1,74 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: eth-velcro
+data:
+  port: "3000"
+  contract.address: "0xabc123"
+  ws.url: ""
+  ipfs.url: ""
+---
+kind: Secret
+apiVersion: v1
+type: Opaque
+metadata:
+  name: eth-velcro
+data:
+  some.secret: "super secret stuff yo"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eth-velcro
+  labels:
+    app: eth-velcro
+spec:
+  selector:
+    matchLabels:
+      app: eth-velcro
+  template:
+    metadata:
+      labels:
+        app: eth-velcro
+    spec:
+      containers:
+      - name: eth-velcro
+        image: ${IMAGE_NAME_COMMIT}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: SOME_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: eth-velcro
+              key: username
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: eth-velcro
+              key: port
+        - name: CONTRACT_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: eth-velcro
+              key: contract.address
+        - name: WS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: eth-velcro
+              key: ws.url
+        - name: IPFS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: eth-velcro
+              key: ipfs.url
