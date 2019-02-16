@@ -14,7 +14,7 @@ type: Opaque
 metadata:
   name: eth-velcro
 data:
-  some.secret: "super secret stuff yo"
+  some.secret: "c3VwZXIgc2VjcmV0IHN0dWZmIHlvCg=="
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -51,7 +51,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: eth-velcro
-              key: username
+              key: some.secret
         - name: PORT
           valueFrom:
             configMapKeyRef:
