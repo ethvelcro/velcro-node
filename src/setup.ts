@@ -1,9 +1,9 @@
-import Web3 from 'web3'
-import ipfsClient from 'ipfs-http-client'
+import Web3 from 'web3';
+import ipfsClient from 'ipfs-http-client';
 
-import { WebhookSource } from './WebhookSource'
-import { WebhookListenerFactory } from './WebhookListenerFactory'
-import { WebhookManager } from './WebhookManager'
+import { WebhookSource } from './WebhookSource';
+import { WebhookListenerFactory } from './WebhookListenerFactory';
+import { WebhookManager } from './WebhookManager';
 
 export async function setup(
   velcroContractAddress: string,
