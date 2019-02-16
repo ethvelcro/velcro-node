@@ -1,4 +1,4 @@
-export * from "./WebhookListener";
+import { setup } from './setup'
 
 const http = require("http");
 
@@ -8,6 +8,12 @@ const { PORT } = process.env;
 if (!PORT) {
     throw new Error("Missing env PORT");
 }
+
+setup(
+  process.env.CONTRACT_ADDRESS,
+  process.env.WS_URL,
+  process.env.IPFS_URL
+)
 
 http.createServer((req, res) => {
     if (req.url === healthEndpoint) {
@@ -21,5 +27,3 @@ http.createServer((req, res) => {
 }).listen(PORT);
 
 console.debug(`Listening on :${PORT}`);
-
-
