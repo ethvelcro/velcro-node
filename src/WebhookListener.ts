@@ -1,16 +1,6 @@
 import Web3 from "web3";
 import { EventQuery, Query, Webhook, QueryResult } from "./types";
 
-// const extractQueryDefFromIpfs = async ({ hash }: { hash: string }): Promise<Webhook> => {
-//   return Promise.resolve({
-//     version: "1.0",
-//     url: "",
-//     query: {
-//       type: "foobar"
-//     },
-//   });
-// };
-
 class Web3Consumer {
   public web3;
 
@@ -27,7 +17,7 @@ export class WebhookListener extends Web3Consumer {
     super(web3);
     this.fetch = fetch;
   }
-  
+
   public start(webhook: Webhook) {
     if (this.subscription) { throw new Error("we've already started"); }
 
