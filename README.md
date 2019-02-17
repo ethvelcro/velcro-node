@@ -1,3 +1,5 @@
+![Travis CI build status][BuildStatus]][BuildStatusLink]
+
 # velcro-node
 
 The Velcro node is a server that listens for Ethereum smart contract events or Graph Protocol subscriptions and triggers their corresponding webhooks.
@@ -38,3 +40,6 @@ docker pull ethvelcro/velcro-node:latest
 
 ### kubernetes
 You can find an example deploy configuration that is used for the public server in `./k8s`.
+
+[BuildStatus]: https://travis-ci.org/ethvelcro/velcro-node.svg?branch=master "Travis CI status"
+[BuildStatusLink]: https://travis-ci.org/ethvelcro/velcro-node
