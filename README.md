@@ -20,6 +20,11 @@ yarn
 yarn dev
 ```
 
+## test
+```bash
+yarn test
+```
+
 ## required env vars
 See `./env.example` for local dev defaultss
 
