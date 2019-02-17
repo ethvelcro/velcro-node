@@ -1,4 +1,4 @@
-![Travis CI build status][BuildStatus][BuildStatusLink]
+[![Build Status](https://travis-ci.org/ethvelcro/velcro-node.svg?branch=master)](https://travis-ci.org/ethvelcro/velcro-node)
 
 # velcro-node
 
@@ -40,6 +40,3 @@ docker pull ethvelcro/velcro-node:latest
 
 ### kubernetes
 You can find an example deploy configuration that is used for the public server in `./k8s`.
-
-[BuildStatus]: https://travis-ci.org/ethvelcro/velcro-node.svg?branch=master "Travis CI status"
-[BuildStatusLink]: https://travis-ci.org/ethvelcro/velcro-node
