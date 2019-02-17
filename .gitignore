@@ -3,3 +3,4 @@ lib
 dist
 yarn-error.log
 .nvmrc
+.env

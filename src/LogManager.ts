@@ -29,6 +29,7 @@ export class LogManager {
     }
 
     public pushLog(ipfsHash: string, log: Object) {
+      console.log(`pushLog ${ipfsHash}`, log)
         const wsArr = this.subscriptions[ipfsHash];
         if (!wsArr) {
             return;
