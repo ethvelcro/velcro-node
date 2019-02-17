@@ -25,6 +25,21 @@
           }
         }
       }
+    },
+    "paramMapping": {
+      "description": "Array of optional mappings to remap object fields to url params",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "paramName": {
+            "type": "string"
+          },
+          "resultPath": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "required": [ "url", "query" ]

@@ -3,6 +3,12 @@ export interface Webhook {
   ipfsHash: string;
   url: string;
   query: Query;
+  paramMapping: Array<QueryParamMapping>;
+}
+
+export interface QueryParamMapping {
+  paramName: string,
+  resultPath: string
 }
 
 export interface Query {

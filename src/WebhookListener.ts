@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import { EventQuery, Query, Webhook, QueryResult } from "./types";
 import { LogManager } from './LogManager'
+import { formatResult } from './formatResult'
 
 class Web3Consumer {
   public web3;
@@ -45,7 +46,7 @@ export class WebhookListener extends Web3Consumer {
   }
 
   public onData(webhook: Webhook, log: any) {
-    let result = this.formatResult(webhook, log);
+    let result = formatResult(webhook, log);
     this.logManager.pushLog(webhook.ipfsHash, result);
     this.fetch(webhook.url, {
       method: "POST",
@@ -68,12 +69,5 @@ export class WebhookListener extends Web3Consumer {
       this.subscription.unsubscribe();
       this.subscription = null;
     }
-  }
-
-  public formatResult(webhook: Webhook, result: Object): QueryResult {
-    return {
-      webhook,
-      result,
-    };
   }
 }

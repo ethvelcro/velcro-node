@@ -9,7 +9,8 @@ describe('validator', () => {
       query: {
         address: '0x1234',
         topics: []
-      }
+      },
+      paramMapping: []
     })).toBeTruthy()
 
     expect(
