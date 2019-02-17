@@ -72,3 +72,32 @@ spec:
             configMapKeyRef:
               name: eth-velcro
               key: ipfs.url
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: eth-velcro
+spec:
+  selector:
+    app: eth-velcro
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: eth-velcro
+spec:
+  tls:
+    - secretName: monchu-app-tls
+  rules:
+  - host: eth-velcro.monchu.app
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: eth-velcro
+          servicePort: 80
