@@ -23,8 +23,15 @@
           "items": {
             "type": "string"
           }
+        },
+        "webhookUri": {
+          "type": "string"
+        },
+        "subscriptionQuery": {
+          "type": "string"
         }
-      }
+      },
+      "required": [ "queryType" ]
     },
     "paramMapping": {
       "description": "Array of optional mappings to remap object fields to url params",

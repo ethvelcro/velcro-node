@@ -20,6 +20,11 @@ export interface EventQuery extends Query {
   topics: String[];
 }
 
+export interface GraphQuery extends Query {
+  websocketUri: string,
+  subscriptionQuery: string
+}
+
 export interface QueryResult {
   webhook: Webhook;
   result: Object;

@@ -4,6 +4,7 @@ describe('WebhookSource', () => {
   const validWebhook = {
     url: 'webhookUrl',
     query: {
+      queryType: 'EventQuery',
       address: 'addy',
       topics: ['1']
     }

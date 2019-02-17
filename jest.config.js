@@ -7,7 +7,8 @@ module.exports = {
     "ts",
     "tsx",
     "js",
-    "json"
+    "json",
+    "mjs"
   ],
   "testPathIgnorePatterns": [
     "node_modules/",

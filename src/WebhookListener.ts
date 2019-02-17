@@ -2,6 +2,7 @@ import Web3 from "web3";
 import { EventQuery, Query, Webhook, QueryResult } from "./types";
 import { LogManager } from './LogManager'
 import { formatResult } from './formatResult'
+import { IWebhookListener } from './IWebhookListener'
 
 class Web3Consumer {
   public web3;
@@ -11,7 +12,7 @@ class Web3Consumer {
   }
 }
 
-export class WebhookListener extends Web3Consumer {
+export class WebhookListener extends Web3Consumer implements IWebhookListener {
   public subscription: any;
   public fetch: Function;
   private logManager: LogManager;
@@ -52,7 +53,7 @@ export class WebhookListener extends Web3Consumer {
       method: "POST",
       body: JSON.stringify(result),
     }).catch(error => {
-      console.error(error)
+      this.onError(webhook, error)
     });
   }
 
