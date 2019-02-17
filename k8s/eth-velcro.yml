@@ -26,6 +26,11 @@ spec:
   selector:
     matchLabels:
       app: eth-velcro
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
