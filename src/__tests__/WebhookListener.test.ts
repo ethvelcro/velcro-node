@@ -9,7 +9,7 @@ describe("WebhookListener", () => {
       on: jest.fn(),
       unsubscribe: jest.fn()
     };
-    fetch = jest.fn();
+    fetch = jest.fn(() => Promise.resolve());
     web3 = {
       eth: {
         subscribe: () => subscription,

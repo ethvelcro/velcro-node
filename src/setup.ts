@@ -12,7 +12,7 @@ export async function setup(
 ) {
 
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerUrl));
-  const ipfs = ipfsClient(ipfsUrl);
+  const ipfs = ipfsClient('ipfs.infura.io', '5001', { protocol: 'https'});
 
   const webhookSource = new WebhookSource(ipfs);
   const webhookListenerFactory = new WebhookListenerFactory(web3);
@@ -22,5 +22,7 @@ export async function setup(
     webhookSource,
     webhookListenerFactory
   );
+  console.log('Starting manager...')
   await webhookManager.start();
+  console.log('Manager started')
 }

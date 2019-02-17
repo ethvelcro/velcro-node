@@ -10,7 +10,7 @@ export class WebhookSource {
   }
 
   async get (ipfsHash): Promise<Webhook> {
-    const content = await this._ipfs.get(ipfsHash);
+    const [{ path, content }] = await this._ipfs.get(ipfsHash);
     const json = JSON.parse(content);
     const validate = validator();
     if (!validate(json)) {

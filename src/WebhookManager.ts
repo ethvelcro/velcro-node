@@ -2,6 +2,7 @@ import { eventProjection } from './eventProjection';
 import { WebhookSource } from './WebhookSource';
 import { WebhookListener } from './WebhookListener'
 import { WebhookListenerFactory } from './WebhookListenerFactory';
+import velcroArtifact from 'velcro-contracts/build/contracts/Velcro.json'
 import * as utils from 'web3-utils';
 
 export class WebhookManager {
@@ -28,33 +29,25 @@ export class WebhookManager {
   async start() {
     if (this.subscription) { return }
 
-    const topics = [
-      [
-        utils.sha3('Registered(address,bytes)'),
-        utils.sha3('Unregistered(address,bytes)')
-      ]
-    ];
+    var contract = this.getContract()
 
-    var subscription =
-      this.web3.eth.subscribe(
-        'logs',
-        this.address,
-        topics
-      );
+    var subscription = contract.events.allEvents()
 
     subscription.on('data', this.onData.bind(this));
     subscription.on('error', this.onError.bind(this));
 
     this.subscription = subscription;
 
-    const events = await this.web3.eth.getPastLogs({
+    const events = await contract.getPastEvents('allEvents', {
       fromBlock: 0,
-      toBlock: 'latest',
-      address: this.address,
-      topics
+      toBlock: 'latest'
     });
 
+    console.log(`Found ${events.length} past events`)
+
     const ipfsHashes = eventProjection(events);
+
+    console.log('Found hashes', ipfsHashes)
 
     await Promise.all(Array.from(ipfsHashes).map(ipfsHash => this.register(ipfsHash)));
   }
@@ -83,7 +76,7 @@ export class WebhookManager {
   }
 
   onRegistered(log) {
-    const { ipfsHash } = log.args;
+    const ipfsHash = utils.toUtf8(log.returnValues.ipfsHash);
     this.register(ipfsHash);
   }
 
@@ -100,12 +93,16 @@ export class WebhookManager {
   }
 
   onUnregistered(log) {
-    const { ipfsHash } = log.args;
+    const ipfsHash = utils.toUtf8(log.returnValues.ipfsHash);
     let webhookListener = this.listeners[ipfsHash]
     if (webhookListener) {
       console.log(`Stopping webhook ${ipfsHash}...`)
       webhookListener.stop()
       delete this.listeners[ipfsHash]
     }
+  }
+
+  getContract () {
+    return new this.web3.eth.Contract(velcroArtifact.abi, this.address)
   }
 }

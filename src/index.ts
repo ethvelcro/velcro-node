@@ -1,4 +1,4 @@
-import { setup } from './setup';
+const setup = require('./setup').setup
 
 const http = require("http");
 

@@ -15,7 +15,7 @@ describe('WebhookSource', () => {
 
   it('should retrieve from IPFS and validate and contruct', async () => {
     let ipfs = {
-      get: jest.fn(() => JSON.stringify(validWebhook))
+      get: jest.fn(() => [{ path: 'path', content: JSON.stringify(validWebhook) }])
     }
     let webhookSource = new WebhookSource(ipfs)
     var webhook = await webhookSource.get('ipfsHash')

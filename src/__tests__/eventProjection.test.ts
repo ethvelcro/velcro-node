@@ -1,10 +1,11 @@
 import { eventProjection } from '../eventProjection'
+import * as utils from 'web3-utils'
 
 function Registered(ipfsHash: string): any {
   return {
     event: 'Registered',
-    args: {
-      ipfsHash
+    returnValues: {
+      ipfsHash: utils.utf8ToHex(ipfsHash)
     }
   }
 }
@@ -12,8 +13,8 @@ function Registered(ipfsHash: string): any {
 function Unregistered(ipfsHash: string): any {
   return {
     event: 'Unregistered',
-    args: {
-      ipfsHash
+    returnValues: {
+      ipfsHash: utils.utf8ToHex(ipfsHash)
     }
   }
 }
@@ -25,7 +26,6 @@ describe('eventProjection', () => {
       Registered('asdf'),
       Unregistered('1234')
     ]
-
     const set = eventProjection(logs)
 
     expect(set).toEqual(new Set(['asdf']))

@@ -7,26 +7,32 @@ jest.mock('../eventProjection')
 describe('WebhookManager', () => {
   let web3,
       subscribe,
-      subscription,
       get,
       manager,
-      getPastLogs,
-      webhookListenerFactory
+      webhookListenerFactory,
+      contractAllEvents,
+      allEventsSubscription,
+      contractGetPastEvents
 
   beforeEach(() => {
-    subscription = {
+    allEventsSubscription = {
       on: jest.fn()
     }
-    getPastLogs = jest.fn(() => [])
-    subscribe = jest.fn(() => subscription)
+    contractAllEvents = jest.fn(() => allEventsSubscription)
+    contractGetPastEvents = jest.fn(() => [])
+    let Contract = jest.fn(() => ({
+      events: {
+        allEvents: contractAllEvents
+      },
+      getPastEvents: contractGetPastEvents
+    }))
     get = jest.fn(() => Promise.resolve('webhook'))
     web3 = {
       utils: {
         sha3: utils.sha3
       },
       eth: {
-        subscribe,
-        getPastLogs
+        Contract
       }
     }
     let webhookSource = new WebhookSource('ipfs')
@@ -43,33 +49,20 @@ describe('WebhookManager', () => {
     it(
       'should setup the subscription and pull events',
       async () => {
-        const topics = [
-          [
-            utils.sha3('Registered(address,bytes)'),
-            utils.sha3('Unregistered(address,bytes)')
-          ]
-        ]
-
         await manager.start()
-        expect(subscribe).toHaveBeenCalledWith(
-          'logs',
-          '0x1234',
-          topics
-        )
+        expect(contractGetPastEvents).toHaveBeenCalledTimes(1)
 
-        expect(subscription.on).toHaveBeenCalledWith(
+        expect(allEventsSubscription.on).toHaveBeenCalledWith(
           'data', expect.anything()
         )
 
-        expect(subscription.on).toHaveBeenCalledWith(
+        expect(allEventsSubscription.on).toHaveBeenCalledWith(
           'error', expect.anything()
         )
 
-        expect(getPastLogs).toHaveBeenCalledWith({
+        expect(contractGetPastEvents).toHaveBeenCalledWith('allEvents', {
           fromBlock: 0,
-          toBlock: 'latest',
-          address: '0x1234',
-          topics
+          toBlock: 'latest'
         })
 
         expect(get).toHaveBeenCalledWith('asdf')

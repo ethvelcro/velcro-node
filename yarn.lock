@@ -5634,6 +5634,11 @@ vary@^1, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
+velcro-contracts@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/velcro-contracts/-/velcro-contracts-0.0.3.tgz#3fd60cf994d4678092256a0d1c1322d303a5a344"
+  integrity sha512-HjavwG1c4xuwErzo5qN9dRc6zLoROUQ7pP8it59T/hixlFih8vV2CX8+02minNR4ggfnVFiKyrVBft7Brw56bw==
+
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/verror/-/verror-1.10.0.tgz#3a105ca17053af55d6e270c1f8288682e18da400"

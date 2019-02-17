@@ -23,10 +23,12 @@ export class WebhookListener extends Web3Consumer {
 
     if (webhook.query.queryType === 'EventQuery') {
       const eventQuery: EventQuery = <EventQuery> webhook.query;
+      const { address, topics } = eventQuery
+
+      console.log(`Subscribing to ${address} with topics ${topics.join(', ')}`)
 
       this.subscription = this.web3.eth.subscribe("logs", {
-        address: eventQuery.address,
-        topics: eventQuery.topics,
+        address: eventQuery.address
       });
 
       this.subscription.on("data", this.onData.bind(this, webhook));
@@ -37,10 +39,13 @@ export class WebhookListener extends Web3Consumer {
     }
   }
 
-  public onData(webhook: Webhook, log: Object) {
+  public onData(webhook: Webhook, log: any) {
+    console.log(`Received log for txHash ${log.transactionHash} and sending to ${webhook.url}`)
     this.fetch(webhook.url, {
       method: "POST",
       body: JSON.stringify(this.formatRequest(webhook, log)),
+    }).catch(error => {
+      console.error(error)
     });
   }
 
@@ -48,6 +53,8 @@ export class WebhookListener extends Web3Consumer {
     this.fetch(webhook.url, {
       method: "POST",
       body: JSON.stringify(this.formatRequest(webhook, log)),
+    }).catch(error => {
+      console.error(error)
     });
   }
 
