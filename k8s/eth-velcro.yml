@@ -97,9 +97,9 @@ metadata:
   name: eth-velcro
 spec:
   tls:
-    - secretName: monchu-app-tls
+    - secretName: ethvelcro-network-tls
   rules:
-  - host: eth-velcro.monchu.app
+  - host: api.ethvelcro.network
     http:
       paths:
       - path: /
