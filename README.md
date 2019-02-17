@@ -1,4 +1,4 @@
-![Travis CI build status][BuildStatus]][BuildStatusLink]
+![Travis CI build status][BuildStatus][BuildStatusLink]
 
 # velcro-node
 
