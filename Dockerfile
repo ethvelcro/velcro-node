@@ -7,12 +7,14 @@ WORKDIR /velcro-node
 
 RUN npm install -g yarn
 
-COPY . .
+COPY package.json yarn.lock ./
 RUN yarn
-RUN yarn dist
 
-FROM node:10-alpine
+COPY . .
+RUN yarn build
 
-WORKDIR /velcro-node
-COPY --from=builder /velcro-node/dist/bundle.umd.js ./velcro-node.js
-CMD ["node", "./velcro-node.js"]
+COPY ./src/webhook.schema.json ./lib
+
+ENV NODE_ENV production
+
+CMD ["node", "./lib/index.js"]

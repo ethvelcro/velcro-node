@@ -22,8 +22,8 @@ export class WebhookManager {
     this.web3 = web3;
     this.address = address;
     this.webhookSource = webhookSource;
-    this.webhookListenerFactory = webhookListenerFactory
-    this.listeners = new Map()
+    this.webhookListenerFactory = webhookListenerFactory;
+    this.listeners = new Map();
   }
 
   async start() {

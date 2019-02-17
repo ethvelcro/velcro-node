@@ -1,8 +1,9 @@
-const setup = require('./setup').setup
+import express from "express";
+import enableWs from "express-ws";
 
-const http = require("http");
-
-const healthEndpoint = "/health";
+import { LogManager } from "./LogManager";
+import { WebhookManager } from "./WebhookManager";
+import { setup } from './setup';
 
 const { PORT } = process.env;
 if (!PORT) {
@@ -15,15 +16,25 @@ setup(
   process.env.IPFS_URL
 )
 
-http.createServer((req, res) => {
-    if (req.url === healthEndpoint) {
-        res.writeHead(200);
-        res.end();
-        return;
-    }
+const logManager = new LogManager();
 
-    res.writeHead(404);
-    res.end();
-}).listen(PORT);
+const app = express();
+enableWs(app);
 
-console.debug(`Listening on :${PORT}`);
+app.get("/health", (_, res) => {
+    res.sendStatus(200);
+});
+
+// @ts-ignore: ws injected via express-ws
+app.ws('/ipfsHash/:ipfsHash', (ws, req) => {
+    const { ipfsHash } = req.params;
+    logManager.subscribe(ipfsHash, ws);
+
+    ws.on('close', () => {
+        logManager.unsubscribe(ipfsHash, ws);
+    });
+});
+
+app.listen(PORT, () => {
+    console.debug(`Listening on :${PORT}`);
+});
