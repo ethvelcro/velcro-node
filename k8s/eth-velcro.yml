@@ -4,7 +4,7 @@ metadata:
   name: eth-velcro
 data:
   port: "3000"
-  contract.address: "0xef7ef0ddbf124481cc714ab2d74b5565c7a743a3"
+  contract.address: "0xeb458b030d6be178e301910f7077955574bb7be4"
   ws.url: "wss://ropsten.infura.io/ws/v3/5e378f49a3994737940a897b2d95222b"
   ipfs.url: ""
 ---
