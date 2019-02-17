@@ -1,10 +1,11 @@
 import Web3 from "web3";
 import { EventQuery, Query, Webhook, QueryResult } from "./types";
+import { LogManager } from './LogManager'
 
 class Web3Consumer {
   public web3;
 
-  constructor(web3: Object) { // TODO Use web3 type
+  constructor(web3: Object) {
     this.web3 = web3;
   }
 }
@@ -12,10 +13,12 @@ class Web3Consumer {
 export class WebhookListener extends Web3Consumer {
   public subscription: any;
   public fetch: Function;
+  private logManager: LogManager;
 
-  constructor(fetch: Function, web3: Object) {
+  constructor(fetch: Function, web3: Object, logManager: LogManager) {
     super(web3);
     this.fetch = fetch;
+    this.logManager = logManager;
   }
 
   public start(webhook: Webhook) {
@@ -25,14 +28,16 @@ export class WebhookListener extends Web3Consumer {
       const eventQuery: EventQuery = <EventQuery> webhook.query;
       const { address, topics } = eventQuery
 
-      console.log(`Subscribing to ${address} with topics ${topics.join(', ')}`)
+      this.logManager.pushLog(webhook.ipfsHash, {
+        type: "info",
+        message: `Subscribing to ${address} with topics ${topics.join(', ')} for url ${webhook.url}`
+      })
 
       this.subscription = this.web3.eth.subscribe("logs", {
         address: eventQuery.address
       });
 
       this.subscription.on("data", this.onData.bind(this, webhook));
-      this.subscription.on("changed", this.onChanged.bind(this, webhook));
       this.subscription.on("error", this.onError.bind(this, webhook));
     } else {
       throw new Error(`Unrecognized query type ${webhook.query.queryType}`)
@@ -40,25 +45,21 @@ export class WebhookListener extends Web3Consumer {
   }
 
   public onData(webhook: Webhook, log: any) {
-    console.log(`Received log for txHash ${log.transactionHash} and sending to ${webhook.url}`)
+    let result = this.formatResult(webhook, log);
+    this.logManager.pushLog(webhook.ipfsHash, result);
     this.fetch(webhook.url, {
       method: "POST",
-      body: JSON.stringify(this.formatRequest(webhook, log)),
-    }).catch(error => {
-      console.error(error)
-    });
-  }
-
-  public onChanged(webhook: Webhook, log: Object) {
-    this.fetch(webhook.url, {
-      method: "POST",
-      body: JSON.stringify(this.formatRequest(webhook, log)),
+      body: JSON.stringify(result),
     }).catch(error => {
       console.error(error)
     });
   }
 
   public onError(webhook: Webhook, error: Error) {
+    this.logManager.pushLog(webhook.ipfsHash, {
+      type: "error",
+      message: error.message
+    });
     console.error(error);
   }
 
@@ -69,7 +70,7 @@ export class WebhookListener extends Web3Consumer {
     }
   }
 
-  public formatRequest(webhook: Webhook, result: Object): QueryResult {
+  public formatResult(webhook: Webhook, result: Object): QueryResult {
     return {
       webhook,
       result,

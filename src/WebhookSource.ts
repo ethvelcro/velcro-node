@@ -18,6 +18,7 @@ export class WebhookSource {
         validate.errors.map(err => err.message).join(', ')
       );
     }
+    json.ipfsHash = ipfsHash
     return json;
   }
 }

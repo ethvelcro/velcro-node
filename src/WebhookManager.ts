@@ -47,8 +47,6 @@ export class WebhookManager {
 
     const ipfsHashes = eventProjection(events);
 
-    console.log('Found hashes', ipfsHashes)
-
     await Promise.all(Array.from(ipfsHashes).map(ipfsHash => this.register(ipfsHash)));
   }
 

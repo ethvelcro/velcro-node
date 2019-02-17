@@ -1,5 +1,6 @@
 export interface Webhook {
   version: string;
+  ipfsHash: string;
   url: string;
   query: Query;
 }

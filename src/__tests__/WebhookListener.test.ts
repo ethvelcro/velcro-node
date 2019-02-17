@@ -1,8 +1,9 @@
 import { WebhookListener } from "../WebhookListener";
 import { webhookFactory } from "./support/webhookFactory";
+import { LogManager } from '../LogManager'
 
 describe("WebhookListener", () => {
-  let subscription, fetch, web3, webhookListener;
+  let subscription, fetch, web3, webhookListener, logManager;
 
   beforeEach(() => {
     subscription = {
@@ -15,7 +16,8 @@ describe("WebhookListener", () => {
         subscribe: () => subscription,
       },
     };
-    webhookListener = new WebhookListener(fetch, web3);
+    logManager = new LogManager()
+    webhookListener = new WebhookListener(fetch, web3, logManager);
   });
 
   describe("start()", () => {
@@ -23,7 +25,6 @@ describe("WebhookListener", () => {
       const webhook = webhookFactory();
       webhookListener.start(webhook);
       expect(subscription.on).toHaveBeenCalledWith("data", expect.anything());
-      expect(subscription.on).toHaveBeenCalledWith("changed", expect.anything());
       expect(subscription.on).toHaveBeenCalledWith("error", expect.anything());
     });
 
@@ -48,20 +49,6 @@ describe("WebhookListener", () => {
     it('should call fetch', () => {
       const webhook = webhookFactory()
       webhookListener.onData(webhook, { hello: 'test' })
-      expect(fetch).toHaveBeenCalledWith(webhook.url, {
-        method: 'POST',
-        body: JSON.stringify({
-          webhook,
-          result: { hello: 'test' }
-        })
-      })
-    })
-  })
-
-  describe('onChanged', () => {
-    it('should call fetch', () => {
-      const webhook = webhookFactory()
-      webhookListener.onChanged(webhook, { hello: 'test' })
       expect(fetch).toHaveBeenCalledWith(webhook.url, {
         method: 'POST',
         body: JSON.stringify({

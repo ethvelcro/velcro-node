@@ -10,13 +10,14 @@ if (!PORT) {
     throw new Error("Missing env PORT");
 }
 
+const logManager = new LogManager();
+
 setup(
   process.env.CONTRACT_ADDRESS,
   process.env.WS_URL,
-  process.env.IPFS_URL
+  process.env.IPFS_URL,
+  logManager
 )
-
-const logManager = new LogManager();
 
 const app = express();
 enableWs(app);
