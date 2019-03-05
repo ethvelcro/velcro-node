@@ -1,3 +1,9 @@
+# [DEPRECATED]
+
+This repo was created for the ETHDenver 2019 Hackathon.  We're keeping this available for historical purposes.
+
+The project has been rebranded as Notus.  You can refer to the new Notus node [Github project](https://github.com/NotifyUs/notus-node).
+
 # velcro-node
 
 The Velcro node is a server that listens for Ethereum smart contract events or Graph Protocol subscriptions and triggers their corresponding webhooks.
